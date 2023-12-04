@@ -1,0 +1,36 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Video Player App</title>
+</head>
+<body>
+  <button onclick="openFile()">Open Video</button>
+  <video id="videoPlayer" controls>
+    <source src="" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+
+  <script>
+    // Function to send the 'open-file' event to the main process
+    function openFile() {
+      require('electron').ipcRenderer.send('open-file');
+    }
+
+    // Function to handle loading the selected video file
+    function loadVideo(file) {
+      const videoPlayer = document.getElementById('videoPlayer');
+      videoPlayer.src = `file://${file}`;
+    }
+
+    // Listen for the 'load-video' event from the main process
+    const { ipcRenderer } = require('electron');
+    ipcRenderer.on('load-video', (event, file) => {
+      loadVideo(file);
+    });
+
+    // Signal to the main process that the renderer process is ready
+    ipcRenderer.send('app-ready');
+  </script>
+</body>
+</html>
